@@ -1,5 +1,15 @@
 # Release Notes
 
+## v1.4.4 (2026-11-26)
+
+### ✨ 新特性与优化 (Features & Improvements)
+- **桌面端单例启动与窗口唤起**：
+  - 集成 `tauri-plugin-single-instance` 插件，限制 Windows / macOS 桌面端仅运行单个应用实例，避免重复启动产生多实例与端口冲突。
+  - 重复启动应用或点击系统托盘时，自动取消最小化并唤起聚焦已运行的主窗口。
+  - 适配 macOS `RunEvent::Reopen` 事件，关闭窗口隐藏到菜单栏后，再次点击 Dock 图标或从 Spotlight/应用列表打开即可自动恢复主窗口。
+
+---
+
 ## v1.4.3 (2026-11-16)
 
 ### ✨ 新功能与优化 (Features & Improvements)

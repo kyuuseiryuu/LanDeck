@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "LanDeck",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "identifier": "la.ksr.landeck",
   "build": {
     "beforeDevCommand": "npm run dev",

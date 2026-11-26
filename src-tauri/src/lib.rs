@@ -315,9 +315,24 @@ async fn set_default_audio_device(
     Ok(())
 }
 
+fn show_main_window(app: &tauri::AppHandle) {
+    if let Some(win) = app.get_webview_window("main") {
+        let _ = win.unminimize();
+        let _ = win.show();
+        let _ = win.set_focus();
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default();
+
+    #[cfg(desktop)]
+    let builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+        show_main_window(app);
+    }));
+
+    builder
         .setup(|app| {
             let data_dir = app
                 .path()
@@ -440,10 +455,7 @@ pub fn run() {
                 .tooltip("LanDeck 正在后台运行")
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
-                        if let Some(win) = app.get_webview_window("main") {
-                            let _ = win.show();
-                            let _ = win.set_focus();
-                        }
+                        show_main_window(app);
                     }
                     #[cfg(target_os = "macos")]
                     "toggle_dock" => {
@@ -466,11 +478,7 @@ pub fn run() {
                         ..
                     } = event
                     {
-                        let app = tray.app_handle();
-                        if let Some(win) = app.get_webview_window("main") {
-                            let _ = win.show();
-                            let _ = win.set_focus();
-                        }
+                        show_main_window(tray.app_handle());
                     }
                 });
 
@@ -511,8 +519,14 @@ pub fn run() {
             list_audio_devices,
             set_default_audio_device,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running LanDeck");
+        .build(tauri::generate_context!())
+        .expect("error while building LanDeck")
+        .run(|_app_handle, _event| {
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { .. } = _event {
+                show_main_window(_app_handle);
+            }
+        });
 }
 
 #[cfg(test)]

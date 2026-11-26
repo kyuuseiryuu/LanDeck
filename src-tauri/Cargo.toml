@@ -1,6 +1,6 @@
 [package]
 name = "landeck"
-version = "1.4.3"
+version = "1.4.4"
 description = "Turn mobile devices into a customizable LanDeck controller"
 authors = ["LanDeck"]
 edition = "2021"
@@ -27,6 +27,9 @@ local-ip-address = "0.6"
 uuid = { version = "1", features = ["v4"] }
 enigo = "0.2"
 sysinfo = "0.32"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-single-instance = "2"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { version = "0.62", features = [
